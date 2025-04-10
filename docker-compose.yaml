@@ -1,0 +1,26 @@
+
+services:
+  lakefs:
+    depends_on:
+      - postgres
+    image: treeverse/lakefs:latest
+    environment:
+      LAKEFS_LISTEN_ADDRESS: "0.0.0.0:8080"
+      LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "random_secret"
+      LAKEFS_DATABASE_TYPE: "postgres"
+      LAKEFS_DATABASE_POSTGRES_CONNECTION_STRING: "postgres://lakefs:lakefs@postgres/postgres?sslmode=disable"
+      LAKEFS_BLOCKSTORE_TYPE: "s3"
+      LAKEFS_BLOCKSTORE_S3_REGION: "us-east-1"
+    ports:
+      - "8080:8080"
+    entrypoint: [
+      "/app/lakefs",
+      "run"
+    ]
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: lakefs
+      POSTGRES_PASSWORD: lakefs
